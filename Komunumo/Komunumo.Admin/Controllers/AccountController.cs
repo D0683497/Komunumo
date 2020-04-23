@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Komunumo.Admin.Entities;
 using Komunumo.Admin.Models.AccountViewModels;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -44,11 +45,74 @@ namespace Komunumo.Admin.Controllers
 
                 if (result.Succeeded)
                 {
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-
-                    return RedirectToLocal(returnUrl);
+                    return RedirectToAction(nameof(AccountController.Login), "Account");
                 }
                 AddErrors(result);
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> IsEmailUnique(string email)
+        {
+            var owner  = await _userManager.FindByEmailAsync(email);
+
+            if (owner != null)
+            {
+                return Json(false);
+            }
+
+            return Json(true);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> IsUserNameUnique(string username)
+        {
+            var owner = await _userManager.FindByNameAsync(username);
+
+            if (owner != null)
+            {
+                return Json(false);
+            }
+
+            return Json(true);
+        }
+
+        #endregion
+
+        #region Login
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> Login(string returnUrl = null)
+        {
+            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            if (ModelState.IsValid)
+            {
+                var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
+                if (result.Succeeded)
+                {
+                    return RedirectToLocal(returnUrl);
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "登入失敗");
+                    return View(model);
+                }
             }
 
             return View(model);

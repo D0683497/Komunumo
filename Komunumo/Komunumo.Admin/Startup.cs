@@ -41,6 +41,7 @@ namespace Komunumo.Admin
                 option.Password.RequireUppercase = false;
                 option.Password.RequireNonAlphanumeric = false;
                 option.Password.RequiredLength = 4;
+                option.User.RequireUniqueEmail = true;
             });
 
             services.ConfigureApplicationCookie(options =>
