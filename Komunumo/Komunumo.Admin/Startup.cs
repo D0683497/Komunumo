@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Komunumo.Admin.Data;
 using Komunumo.Admin.Entities;
 using Microsoft.AspNetCore.Builder;

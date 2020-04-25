@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Komunumo.Admin.Entities;
+using Komunumo.Admin.Extensions.Alerts;
 using Komunumo.Admin.Models.AccountViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -45,7 +46,8 @@ namespace Komunumo.Admin.Controllers
 
                 if (result.Succeeded)
                 {
-                    return RedirectToAction(nameof(AccountController.Login), "Account");
+                    return RedirectToAction(nameof(AccountController.Login), "Account")
+                        .WithSuccess("系統通知", "註冊成功"); ;
                 }
                 AddErrors(result);
             }
@@ -90,7 +92,6 @@ namespace Komunumo.Admin.Controllers
         public async Task<IActionResult> Login(string returnUrl = null)
         {
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
-
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
@@ -106,16 +107,30 @@ namespace Komunumo.Admin.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    return RedirectToLocal(returnUrl);
+                    return RedirectToLocal(returnUrl)
+                        .WithSuccess("系統通知", "登入成功");
                 }
                 else
                 {
                     ModelState.AddModelError(string.Empty, "登入失敗");
-                    return View(model);
+                    return View(model).WithWarning("系統通知", "登入失敗");
                 }
             }
 
             return View(model);
+        }
+
+        #endregion
+
+        #region Logout
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction(nameof(HomeController.Index), "Home")
+                .WithSuccess("系統通知", "登出成功");
         }
 
         #endregion
