@@ -1,5 +1,7 @@
 using Komunumo.Admin.Data;
 using Komunumo.Admin.Entities;
+using Komunumo.Admin.Repositories;
+using Komunumo.Admin.Repositories.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -49,6 +51,8 @@ namespace Komunumo.Admin
             });
 
             services.AddControllersWithViews();
+
+            services.AddScoped<IUserRepository, UserRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Komunumo.Admin.Entities;
 using Komunumo.Admin.Extensions.Alerts;
 using Komunumo.Admin.Models.AccountViewModels;
+using Komunumo.Admin.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -15,11 +17,13 @@ namespace Komunumo.Admin.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IUserRepository _userRepository;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AccountController(SignInManager<ApplicationUser> signInManager, IUserRepository userRepository, UserManager<ApplicationUser> userManager)
         {
-            _userManager = userManager;
             _signInManager = signInManager;
+            _userRepository = userRepository;
+            _userManager = userManager;
         }
 
         #region Register
@@ -41,7 +45,6 @@ namespace Komunumo.Admin.Controllers
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
-
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
@@ -53,34 +56,6 @@ namespace Komunumo.Admin.Controllers
             }
 
             return View(model);
-        }
-
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<IActionResult> IsEmailUnique(string email)
-        {
-            var owner  = await _userManager.FindByEmailAsync(email);
-
-            if (owner != null)
-            {
-                return Json(false);
-            }
-
-            return Json(true);
-        }
-
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<IActionResult> IsUserNameUnique(string username)
-        {
-            var owner = await _userManager.FindByNameAsync(username);
-
-            if (owner != null)
-            {
-                return Json(false);
-            }
-
-            return Json(true);
         }
 
         #endregion
@@ -135,7 +110,204 @@ namespace Komunumo.Admin.Controllers
 
         #endregion
 
+        #region Index
+
+        [HttpGet]
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        #endregion
+
+        #region Profile
+
+        [HttpGet]
+        public async Task<IActionResult> Profile()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var model = new ProfileViewModel
+            {
+                Username = user.UserName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Profile(ProfileViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var email = user.Email;
+            if (model.Email != email)
+            {
+                var setEmailResult = await _userManager.SetEmailAsync(user, model.Email);
+                if (!setEmailResult.Succeeded)
+                {
+                    throw new ApplicationException($"Unexpected error occurred setting email for user with ID '{user.Id}'.");
+                }
+            }
+
+            var phoneNumber = user.PhoneNumber;
+            if (model.PhoneNumber != phoneNumber)
+            {
+                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, model.PhoneNumber);
+                if (!setPhoneResult.Succeeded)
+                {
+                    throw new ApplicationException($"Unexpected error occurred setting phone number for user with ID '{user.Id}'.");
+                }
+            }
+
+            return RedirectToAction(nameof(AccountController.Index), "Account")
+                .WithSuccess("系統通知", "修改成功");
+        }
+
+        #endregion
+
+        #region ChangePassword
+
+        [HttpGet]
+        public async Task<IActionResult> ChangePassword()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var changePasswordResult = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+            if (!changePasswordResult.Succeeded)
+            {
+                AddErrors(changePasswordResult);
+                return View(model).WithDanger("系統通知", "密碼錯誤");
+            }
+
+            await _signInManager.SignOutAsync();
+
+            return RedirectToAction(nameof(AccountController.Login), "Account")
+                .WithSuccess("系統通知", "修改密碼成功，請重新登入");
+        }
+
+        #endregion
+
         #region Healpers
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> IsEmailUnique(string email)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null) // 註冊時
+            {
+                if (_userRepository.ExistsEmail(email))
+                {
+                    return Json(false);
+                }
+            }
+            else // 修改 Profile 時
+            {
+                if (user.Email != email)
+                {
+                    if (_userRepository.ExistsEmail(email))
+                    {
+                        return Json(false);
+                    }
+                }
+            }
+
+            return Json(true);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> IsUserNameUnique(string userName)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null) // 註冊時
+            {
+                if (_userRepository.ExistsUserName(userName))
+                {
+                    return Json(false);
+                }
+            }
+            else // 修改 Profile 時
+            {
+                if (user.UserName != userName)
+                {
+                    if (_userRepository.ExistsUserName(userName))
+                    {
+                        return Json(false);
+                    }
+                }
+            }
+
+            return Json(true);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> IsPhoneNumberUnique(string phoneNumber)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null) // 註冊時
+            {
+                if (_userRepository.ExistsPhoneNumber(phoneNumber))
+                {
+                    return Json(false);
+                }
+            }
+            else // 修改 Profile 時
+            {
+                if (user.PhoneNumber != phoneNumber)
+                {
+                    if (_userRepository.ExistsPhoneNumber(phoneNumber))
+                    {
+                        return Json(false);
+                    }
+                }
+            }
+
+            return Json(true);
+        }
 
         private void AddErrors(IdentityResult result)
         {

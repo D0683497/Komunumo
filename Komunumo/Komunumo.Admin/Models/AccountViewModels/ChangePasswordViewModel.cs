@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Komunumo.Admin.Models.ManageViewModels
+namespace Komunumo.Admin.Models.AccountViewModels
 {
     public class ChangePasswordViewModel
     {
