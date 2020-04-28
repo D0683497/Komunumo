@@ -5,6 +5,10 @@
     {
       "library": "font-awesome@5.13.0",
       "destination": "wwwroot/lib/font-awesome/"
+    },
+    {
+      "library": "bulma@0.8.2",
+      "destination": "wwwroot/lib/bulma/"
     }
   ]
 }
