@@ -4,33 +4,46 @@
     ViewData["Title"] = "註冊";
 }
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-route-returnUrl="@ViewData["ReturnUrl"]" asp-controller="Account" asp-action="Register" method="post">
-            <h4>@ViewData["Title"]</h4>
-            <hr />
-            <div class="form-group">
-                <label asp-for="Email"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UserName"></label>
-                <input asp-for="UserName" class="form-control" />
-                <span asp-validation-for="UserName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Password"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ConfirmPassword"></label>
-                <input asp-for="ConfirmPassword" class="form-control" />
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-            </div>
-            <button type="submit" class="btn btn-success">註冊</button>
-        </form>
+<div class="container">
+    <p class="title">@ViewData["Title"]</p>
+    <div class="level">
+        <div class="column box">
+            <form asp-route-returnUrl="@ViewData["ReturnUrl"]" asp-controller="Account" asp-action="Register" method="post">
+                <div class="field">
+                    <label class="label" asp-for="Email"></label>
+                    <div class="control">
+                        <input asp-for="Email" class="input" />
+                    </div>
+                    <span asp-validation-for="Email" class="help is-danger"></span>
+                </div>
+                <div class="field">
+                    <label class="label" asp-for="UserName"></label>
+                    <div class="control">
+                        <input asp-for="UserName" class="input" />
+                    </div>
+                    <span asp-validation-for="UserName" class="help is-danger"></span>
+                </div>
+                <div class="field">
+                    <label class="label" asp-for="Password"></label>
+                    <div class="control">
+                        <input asp-for="Password" class="input" />
+                    </div>
+                    <span asp-validation-for="Password" class="help is-danger"></span>
+                </div>
+                <div class="field">
+                    <label class="label" asp-for="ConfirmPassword"></label>
+                    <div class="control">
+                        <input asp-for="ConfirmPassword" class="input" />
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="help is-danger"></span>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <button type="submit" class="button is-primary">註冊</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
