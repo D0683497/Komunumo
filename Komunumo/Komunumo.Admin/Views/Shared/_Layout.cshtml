@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
     <title>@ViewData["Title"] - Admin</title>
     <link rel="stylesheet" href="~/lib/bulma/css/bulma.min.css" />
-    <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
+    <link rel="stylesheet" href="~/lib/bulma-modal-fx/dist/css/modal-fx.min.css" />
+    <environment names="Development"></environment>
+    <environment names="Staging,Production"></environment>
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
@@ -41,9 +43,26 @@
             <p>&copy; 2020 - Komunumo.Admin - <a asp-controller="Home" asp-action="Privacy">Privacy</a></p>
         </div>
     </footer>
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/font-awesome/js/all.js"></script>
+    
+    <environment names="Development">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+                crossorigin="anonymous">
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"
+                asp-fallback-src="~/lib/font-awesome/js/all.min.js"
+                asp-fallback-test="window.FontAwesome"
+                integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs="
+                crossorigin="anonymous">
+        </script>
+    </environment>
+    <environment names="Staging,Production">
+        <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script type="text/javascript" src="~/lib/font-awesome/js/all.min.js"></script>
+    </environment>
+    <script type="text/javascript" src="~/lib/bulma-modal-fx/dist/js/modal-fx.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>

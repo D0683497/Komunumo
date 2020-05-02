@@ -5,6 +5,7 @@
 
 @if (SignInManager.IsSignedIn(User))
 {
+    <a asp-controller="Manage" asp-action="Index" class="navbar-item">管理</a>
     <div class="navbar-item has-dropdown is-hoverable">
         <a class="navbar-link">@UserManager.GetUserName(User)</a>
 

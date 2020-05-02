@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "管理";
+}
+
+<div class="container">
+    <h1 class="title">@ViewData["Title"]</h1>
+    <hr>
+    <div class="columns is-multiline">
+        <div class="column is-one-third">
+            <a asp-controller="Manage" asp-action="Users" class="box has-text-centered has-background-grey-lighter">
+                <i class="fas fa-users fa-3x"></i>
+                <p class="subtitle">使用者</p>
+            </a>
+        </div>
+        <div class="column is-one-third">
+            <a asp-controller="" asp-action="" class="box has-text-centered has-background-grey-lighter">
+                <i class="fas fa-user-tag fa-3x"></i>
+                <p class="subtitle">權限</p>
+            </a>
+        </div>
+        <div class="column is-one-third">
+            <a asp-controller="" asp-action="" class="box has-text-centered has-background-grey-lighter">
+                <i class="fas fa-home fa-3x"></i>
+                <p class="subtitle">還沒寫</p>
+            </a>
+        </div>
+    </div>
+</div>
