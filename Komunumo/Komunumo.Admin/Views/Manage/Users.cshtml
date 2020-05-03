@@ -1,5 +1,9 @@
-﻿@{
+﻿@model Komunumo.Admin.Models.Common.PaginatedList<ApplicationUser> 
+
+@{
     ViewData["Title"] = "管理使用者";
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
 }
 
 <div class="container">
@@ -16,95 +20,58 @@
                 </span>
             </p>
         </div>
-        <div class="panel-block">
-            <div class="column is-full">
-                <div class="columns">
-                    <div class="column is-half">
-                        <article class="media">
-                            <div class="media-left">
-                                <figure class="image is-128x128">
-                                    <img class="is-rounded" src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
-                                </figure>
-                            </div>
-                            <div class="media-content">
-                                <div class="content">
-                                    <p class="title">k139</p>
-                                    <p class="subtitle">D0683497</p>
-                                </div>
-                                <nav class="level">
-                                    <div class="level-left">
-                                        <a class="level-item" aria-label="like">
-                                            <span class="tag is-info is-rounded">管理員</span>
-                                        </a>
-                                        <a class="level-item" aria-label="like">
-                                            <span class="tag is-info is-rounded">學生</span>
-                                        </a>
-                                        <a class="level-item" aria-label="like">
-                                            <span class="tag is-warning">黑客社</span>
-                                        </a>
-                                    </div>
-                                </nav>
-                            </div>
-                        </article>
-                    </div>
-                    <div class="column is-half">
-                        <nav class="level">
-                            <div class="level-left"></div>
-                            <div class="level-right">
-                                <button class="button is-primary is-outlined">編輯</button>
-                            </div>
-                        </nav>
-                        <nav class="level">
-                            <div class="level-item has-text-centered">
-                                <div>
-                                    <p class="heading">姓名</p>
-                                    <p class="title">王大明</p>
-                                </div>
-                            </div>
-                            <div class="level-item has-text-centered">
-                                <div>
-                                    <p class="heading">學院</p>
-                                    <p class="title">資訊電機學院</p>
-                                </div>
-                            </div>
-                            <div class="level-item has-text-centered">
-                                <div>
-                                    <p class="heading">系級</p>
-                                    <p class="title">資訊三丙</p>
-                                </div>
-                            </div>
-                        </nav>
-                    </div>
-                </div>
-            </div>
-        </div>
+        @foreach (var user in Model)
+        {
+            @Html.DisplayFor(modelItem => user, "User")
+        }
         <div class="panel-block">
             <div class="column is-full">
                 <nav class="pagination is-centered" role="navigation" aria-label="pagination">
-                    <a class="pagination-previous" disabled>上一頁</a>
-                    <a class="pagination-next">下一頁</a>
+                    @if (Model.HasPreviousPage)
+                    {
+                        <a class="pagination-previous"
+                           asp-controller="Manage" asp-action="Users"
+                           asp-route-currentPageNumber="@(Model.PageIndex - 1)">
+                            上一頁
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="pagination-previous" disabled>上一頁</a>
+                    }
+                    @if (Model.HasNextPage)
+                    {
+                        <a class="pagination-next"
+                           asp-controller="Manage" asp-action="Users"
+                           asp-route-currentPageNumber="@(Model.PageIndex + 1)">
+                            下一頁
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="pagination-next" disabled>下一頁</a>
+                    }
+
                     <ul class="pagination-list">
-                        <li>
-                            <a class="pagination-link" aria-label="Goto page 1">1</a>
-                        </li>
-                        <li>
-                            <span class="pagination-ellipsis">&hellip;</span>
-                        </li>
-                        <li>
-                            <a class="pagination-link" aria-label="Goto page 45">45</a>
-                        </li>
-                        <li>
-                            <a class="pagination-link is-current" aria-label="Page 46" aria-current="page">46</a>
-                        </li>
-                        <li>
-                            <a class="pagination-link" aria-label="Goto page 47">47</a>
-                        </li>
-                        <li>
-                            <span class="pagination-ellipsis">&hellip;</span>
-                        </li>
-                        <li>
-                            <a class="pagination-link" aria-label="Goto page 86">86</a>
-                        </li>
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            if (Model.PageIndex == i)
+                            {
+                                <li>
+                                    <a class="pagination-link is-current" aria-label="Page @i" aria-current="page"
+                                       asp-controller="Manage" asp-action="Users"
+                                       asp-route-currentPageNumber="@i">@i</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li>
+                                    <a class="pagination-link" aria-label="Goto page @i"
+                                       asp-controller="Manage" asp-action="Users"
+                                       asp-route-currentPageNumber="@i">@i</a>
+                                </li>
+                            }
+                        }
                     </ul>
                 </nav>
             </div>

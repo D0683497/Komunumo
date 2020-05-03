@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Threading.Tasks;
+using Komunumo.Admin.Entities;
+using Komunumo.Admin.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Komunumo.Admin.Controllers
@@ -7,6 +11,15 @@ namespace Komunumo.Admin.Controllers
     [Route("[controller]/[action]")]
     public class ManageController : Controller
     {
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserRepository _userRepository;
+
+        public ManageController(IUserRepository userRepository, UserManager<ApplicationUser> userManager)
+        {
+            _userRepository = userRepository;
+            _userManager = userManager;
+        }
+
         #region Index
 
         [HttpGet]
@@ -20,9 +33,11 @@ namespace Komunumo.Admin.Controllers
         #region User
 
         [HttpGet]
-        public IActionResult Users()
+        public async Task<IActionResult> Users(int? currentPageNumber, int? pageSize)
         {
-            return View();
+            var users = await _userRepository.GetUsersAsync(currentPageNumber ?? 1, pageSize ?? 5);
+
+            return View(users);
         }
 
         #endregion
