@@ -1,3 +1,5 @@
+using System;
+using AutoMapper;
 using Komunumo.Admin.Data;
 using Komunumo.Admin.Entities;
 using Komunumo.Admin.Repositories;
@@ -51,6 +53,8 @@ namespace Komunumo.Admin
             });
 
             services.AddControllersWithViews();
+
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddScoped<IUserRepository, UserRepository>();
         }
