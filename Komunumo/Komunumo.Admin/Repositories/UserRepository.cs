@@ -1,7 +1,10 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Komunumo.Admin.Entities;
 using Komunumo.Admin.Models.Common;
+using Komunumo.Admin.Models.ManageViewModels;
 using Komunumo.Admin.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,17 +14,31 @@ namespace Komunumo.Admin.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IMapper _mapper;
 
-        public UserRepository(UserManager<ApplicationUser> userManager)
+        public UserRepository(UserManager<ApplicationUser> userManager, IMapper mapper)
         {
             _userManager = userManager;
+            _mapper = mapper;
         }
 
-        public async Task<PaginatedList<ApplicationUser>> GetUsersAsync(int currentPageNumber, int pageSize)
+        public async Task<PaginatedList<UserViewModel>> GetUsersAsync(int currentPageNumber, int pageSize)
+        {
+            var users = await _userManager.Users.Skip((currentPageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+            var count = await _userManager.Users.CountAsync();
+
+            var items = _mapper.Map<List<ApplicationUser>, List<UserViewModel>>(users);
+
+            var result = new PaginatedList<UserViewModel>(items, count, currentPageNumber ,pageSize);
+
+            return result;
+        }
+
+        public async Task<List<ApplicationUser>> SearchUsersAsync(string searchString)
         {
             var users = _userManager.Users as IQueryable<ApplicationUser>;
 
-            var result = await PaginatedList<ApplicationUser>.CreateAsync(users.AsNoTracking(), currentPageNumber, pageSize);
+            var result = await users.Where(user => user.UserName.Contains(searchString) || user.Email.Contains(searchString)).ToListAsync();
 
             return result;
         }
