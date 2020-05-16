@@ -26,10 +26,14 @@ namespace Komunumo.Admin
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var connectionString = Configuration.GetConnectionString("DefaultConnection");
+
             services.AddDbContext<ApplicationDbContext>(option =>
             {
-                option.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+                option.UseNpgsql(connectionString);
             });
+
+            #region Identity
 
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -51,6 +55,8 @@ namespace Komunumo.Admin
                 options.AccessDeniedPath = "/Account/AccessDenied";
                 options.SlidingExpiration = true;
             });
+
+            #endregion
 
             services.AddControllersWithViews();
 
