@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using AutoMapper;
 using Komunumo.Admin.Data;
 using Komunumo.Admin.Entities;
@@ -27,11 +28,13 @@ namespace Komunumo.Admin
         public void ConfigureServices(IServiceCollection services)
         {
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
+            var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
             services.AddDbContext<ApplicationDbContext>(option =>
             {
                 option.UseNpgsql(connectionString);
             });
+
 
             #region Identity
 
@@ -55,6 +58,28 @@ namespace Komunumo.Admin
                 options.AccessDeniedPath = "/Account/AccessDenied";
                 options.SlidingExpiration = true;
             });
+
+            #endregion
+
+            #region IdentityServer
+
+            services.AddIdentityServer()
+                .AddDeveloperSigningCredential()
+                .AddAspNetIdentity<ApplicationUser>()
+                .AddConfigurationStore(options =>
+                {
+                    options.ConfigureDbContext = builder =>
+                        builder.UseNpgsql(connectionString,
+                            sql => sql.MigrationsAssembly(migrationsAssembly));
+                })
+                .AddOperationalStore(options =>
+                {
+                    options.ConfigureDbContext = builder =>
+                        builder.UseNpgsql(connectionString,
+                            sql => sql.MigrationsAssembly(migrationsAssembly));
+                    options.EnableTokenCleanup = true;
+                    options.TokenCleanupInterval = 30;
+                });
 
             #endregion
 
