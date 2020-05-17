@@ -1,12 +1,12 @@
-using Komunumo.Blog.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-namespace Komunumo.Blog
+using Komunumo.Blog.Data;
+using Microsoft.EntityFrameworkCore;
 
+namespace Komunumo.Blog
 {
     public class Startup
     {
@@ -21,10 +21,10 @@ namespace Komunumo.Blog
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddDbContext<ApplicationContext>(options =>
-                    options.UseSqlite(Configuration.GetConnectionString("ApplicationContext")));
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlite(Configuration.GetConnectionString("ApplicationDbContext")));
         }
-    
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -50,7 +50,7 @@ namespace Komunumo.Blog
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Blog_Data}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }
