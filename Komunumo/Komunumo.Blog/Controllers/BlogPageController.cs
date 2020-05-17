@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Komunumo.Blog.Data;
 using Komunumo.Blog.Models;
-
+using Microsoft.CodeAnalysis;
+using System.Globalization;
+using System;
 namespace Komunumo.Blog.Controllers
 {
     public class BlogPageController : Controller
@@ -23,6 +22,45 @@ namespace Komunumo.Blog.Controllers
         public async Task<IActionResult> Index()
         {
             return View(await _context.BlogData.ToListAsync());
+        }
+
+        // GET: BlogPage/Details/5 Like it
+        public async Task<IActionResult> Add_Like(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+            var blogData = await _context.BlogData
+                            .FirstOrDefaultAsync(m => m.Id == id);
+            if (blogData == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                try
+                {
+                    blogData.LikeCounter += 1;
+                    _context.Update(blogData);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!BlogDataExists(blogData.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return View("Details", blogData);
+            }
+
+            
+
         }
 
         // GET: BlogPage/Details/5
@@ -54,10 +92,13 @@ namespace Komunumo.Blog.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,ReleaseDate,Genre,Price")] BlogData blogData)
+        public async Task<IActionResult> Create([Bind("Id,Title,Context")] BlogData blogData)
         {
             if (ModelState.IsValid)
             {
+                //System.Diagnostics.Debug.WriteLine(blogData.LikeCounter);
+                blogData.EditDate = DateTime.Now;
+                blogData.PostDate = DateTime.Now;
                 _context.Add(blogData);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -66,14 +107,16 @@ namespace Komunumo.Blog.Controllers
         }
 
         // GET: BlogPage/Edit/5
+        // int ? id 表示允許參數接收null值
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
-            var blogData = await _context.BlogData.FindAsync(id);
+                    
+            var blogData = await _context.BlogData
+                    .FirstOrDefaultAsync(m => m.Id == id);
             if (blogData == null)
             {
                 return NotFound();
@@ -86,18 +129,24 @@ namespace Komunumo.Blog.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,ReleaseDate,Genre,Price")] BlogData blogData)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Context")] BlogData blogData)
         {
+            
+
             if (id != blogData.Id)
             {
                 return NotFound();
             }
-
+            
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(blogData);
+                    var OldblogData = await _context.BlogData.FindAsync(id);
+                    OldblogData.EditDate = DateTime.Now;
+                    OldblogData.Title = blogData.Title;
+                    OldblogData.Context = blogData.Context;
+                    _context.Update(OldblogData);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)

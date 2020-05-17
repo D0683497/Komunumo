@@ -4,36 +4,42 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
-
 <div>
-    <h4>BlogData</h4>
+
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Title)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Title)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ReleaseDate)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Context)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ReleaseDate)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Context)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Genre)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PostDate)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Genre)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PostDate)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.EditDate)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Price)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.EditDate)
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.LikeCounter)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.LikeCounter)
+        </dd>
+        
+        <a class="btn btn-dark" role="button" asp-action="Add_Like" asp-route-id="@Model.Id">Like</a>
     </dl>
 </div>
 <div>
