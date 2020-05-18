@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace Komunumo.Admin.Models.Common
+namespace Komunumo.Admin.Models.CommonViewModels
 {
     public class PaginatedList<T> : List<T>
     {
