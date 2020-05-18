@@ -18,12 +18,15 @@ namespace Komunumo.Blog.Controllers
             _context = context;
         }
 
+        #region Index
         // GET: BlogPage
         public async Task<IActionResult> Index()
         {
             return View(await _context.BlogData.ToListAsync());
         }
+        #endregion 
 
+        #region Add_Like
         // GET: BlogPage/Details/5 Like it
         public async Task<IActionResult> Add_Like(int? id)
         {
@@ -58,11 +61,11 @@ namespace Komunumo.Blog.Controllers
                 }
                 return View("Details", blogData);
             }
-
-            
-
         }
+        #endregion
 
+
+        #region Details
         // GET: BlogPage/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -80,7 +83,9 @@ namespace Komunumo.Blog.Controllers
 
             return View(blogData);
         }
+        #endregion
 
+        #region Create
         // GET: BlogPage/Create
         public IActionResult Create()
         {
@@ -94,9 +99,12 @@ namespace Komunumo.Blog.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Context")] BlogData blogData)
         {
+
+            System.Diagnostics.Debug.WriteLine(this.User.Identity.Name);
             if (ModelState.IsValid)
             {
                 //System.Diagnostics.Debug.WriteLine(blogData.LikeCounter);
+                blogData.Poster = this.User.Identity.Name;
                 blogData.EditDate = DateTime.Now;
                 blogData.PostDate = DateTime.Now;
                 _context.Add(blogData);
@@ -105,7 +113,9 @@ namespace Komunumo.Blog.Controllers
             }
             return View(blogData);
         }
+        #endregion
 
+        #region Edit
         // GET: BlogPage/Edit/5
         // int ? id 表示允許參數接收null值
         public async Task<IActionResult> Edit(int? id)
@@ -131,8 +141,6 @@ namespace Komunumo.Blog.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Context")] BlogData blogData)
         {
-            
-
             if (id != blogData.Id)
             {
                 return NotFound();
@@ -164,7 +172,9 @@ namespace Komunumo.Blog.Controllers
             }
             return View(blogData);
         }
+        #endregion
 
+        #region Delete
         // GET: BlogPage/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -182,6 +192,7 @@ namespace Komunumo.Blog.Controllers
 
             return View(blogData);
         }
+        
 
         // POST: BlogPage/Delete/5
         [HttpPost, ActionName("Delete")]
@@ -193,7 +204,7 @@ namespace Komunumo.Blog.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
+        #endregion
         private bool BlogDataExists(int id)
         {
             return _context.BlogData.Any(e => e.Id == id);
