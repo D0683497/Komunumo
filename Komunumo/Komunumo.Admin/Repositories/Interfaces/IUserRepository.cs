@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Komunumo.Admin.Entities;
-using Komunumo.Admin.Models.Common;
+﻿using System.Threading.Tasks;
+using Komunumo.Admin.Models.CommonViewModels;
 using Komunumo.Admin.Models.ManageViewModels;
 
 namespace Komunumo.Admin.Repositories.Interfaces

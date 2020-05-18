@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Komunumo.Admin.Models.Common;
+using Komunumo.Admin.Models.CommonViewModels;
 
 namespace Komunumo.Admin.Models.ConfigurationViewModels
 {

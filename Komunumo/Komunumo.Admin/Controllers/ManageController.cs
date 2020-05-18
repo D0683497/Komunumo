@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Komunumo.Admin.Entities;
 using Komunumo.Admin.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;

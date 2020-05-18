@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Komunumo.Admin.Entities;
-using Komunumo.Admin.Models.Common;
+using Komunumo.Admin.Models.CommonViewModels;
 using Komunumo.Admin.Models.ManageViewModels;
 using Komunumo.Admin.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;

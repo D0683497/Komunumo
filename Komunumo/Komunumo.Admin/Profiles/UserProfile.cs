@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
-using AutoMapper;
+﻿using AutoMapper;
 using Komunumo.Admin.Entities;
-using Komunumo.Admin.Models.Common;
 using Komunumo.Admin.Models.ManageViewModels;
 
 namespace Komunumo.Admin.Profiles
