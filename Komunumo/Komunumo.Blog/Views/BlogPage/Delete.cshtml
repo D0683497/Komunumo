@@ -1,4 +1,4 @@
-﻿@model Komunumo.Blog.Models.BlogData
+﻿@model Komunumo.Blog.Models.Article
 
 @{
     ViewData["Title"] = "Delete";
@@ -38,7 +38,7 @@
     </dl>
     
     <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="Article_ID" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a asp-action="Index">Back to List</a>
     </form>

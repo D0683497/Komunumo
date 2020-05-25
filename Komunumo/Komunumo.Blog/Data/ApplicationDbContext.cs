@@ -10,6 +10,6 @@ namespace Komunumo.Blog.Data
         {
 
         }
-        public DbSet<BlogData> BlogData { get; set; }
+        public DbSet<Article> Article { get; set; }
     }
 }

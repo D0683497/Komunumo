@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Komunumo.Blog.Models
 {
-    public class BlogData
+    public class Article
     {
         [Key]
-        public int Id { get; set; }
+        public int Article_ID { get; set; }
+
+        [ForeignKey("AspNetUsers.Username")]
         public string Poster { get; set; }
         public string Title { get; set; }
         public string Context { get; set; }
@@ -18,6 +17,6 @@ namespace Komunumo.Blog.Models
         [DataType(DataType.Date)]
         public DateTime PostDate { get; set; }
         public DateTime EditDate { get; set; }
-        public int LikeCounter { get; set; }
+        public int Popularity { get; set; }
     }
 }

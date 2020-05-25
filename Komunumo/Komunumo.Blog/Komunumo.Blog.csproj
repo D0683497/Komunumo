@@ -11,6 +11,12 @@
     <Compile Remove="Migrations\20200503071248_InitialCreate.Designer.cs" />
     <Compile Remove="Migrations\20200517115055_Test_Database.cs" />
     <Compile Remove="Migrations\20200517115055_Test_Database.Designer.cs" />
+    <Compile Remove="Migrations\20200517125306_ccc.cs" />
+    <Compile Remove="Migrations\20200517125306_ccc.Designer.cs" />
+    <Compile Remove="Migrations\20200519112421_UsePsql.cs" />
+    <Compile Remove="Migrations\20200519112421_UsePsql.Designer.cs" />
+    <Compile Remove="Migrations\20200525055205_Test.cs" />
+    <Compile Remove="Migrations\20200525055205_Test.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,6 +30,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.2" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.3" />
   </ItemGroup>
 
 </Project>

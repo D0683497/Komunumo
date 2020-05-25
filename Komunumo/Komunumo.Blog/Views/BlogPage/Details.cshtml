@@ -1,4 +1,4 @@
-﻿@model Komunumo.Blog.Models.BlogData
+﻿@model Komunumo.Blog.Models.Article
 
 @{
     ViewData["Title"] = "Details";
@@ -33,16 +33,16 @@
             @Html.DisplayFor(model => model.EditDate)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.LikeCounter)
+            @Html.DisplayNameFor(model => model.Popularity)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.LikeCounter)
+            @Html.DisplayFor(model => model.Popularity)
         </dd>
         
-        <a class="btn btn-dark" role="button" asp-action="Add_Like" asp-route-id="@Model.Id">Like</a>
+        <a class="btn btn-dark" role="button" asp-action="Add_Like" asp-route-id="@Model.Article_ID">Like</a>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model.Article_ID">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

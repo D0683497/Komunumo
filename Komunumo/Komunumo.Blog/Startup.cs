@@ -22,7 +22,7 @@ namespace Komunumo.Blog
         {
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlite(Configuration.GetConnectionString("ApplicationDbContext")));
+                options.UseNpgsql(Configuration.GetConnectionString("ApplicationDbContext")));
             services.AddIdentity<IdentityUser, IdentityRole>(config =>
             {
                 config.Password.RequiredLength = 4;

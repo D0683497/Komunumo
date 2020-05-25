@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Komunumo.Blog.Data;
 using Komunumo.Blog.Models;
 using Microsoft.CodeAnalysis;
-using System.Globalization;
 using System;
 namespace Komunumo.Blog.Controllers
 {
@@ -22,21 +21,21 @@ namespace Komunumo.Blog.Controllers
         // GET: BlogPage
         public async Task<IActionResult> Index()
         {
-            return View(await _context.BlogData.ToListAsync());
+            return View(await _context.Article.ToListAsync());
         }
         #endregion 
 
         #region Add_Like
         // GET: BlogPage/Details/5 Like it
-        public async Task<IActionResult> Add_Like(int? id)
+        public async Task<IActionResult> Add_Like(int? article_ID)
         {
-            if(id == null)
+            if(article_ID == null)
             {
                 return NotFound();
             }
-            var blogData = await _context.BlogData
-                            .FirstOrDefaultAsync(m => m.Id == id);
-            if (blogData == null)
+            var article = await _context.Article
+                            .FirstOrDefaultAsync(m => m.Article_ID == article_ID);
+            if (article == null)
             {
                 return NotFound();
             }
@@ -44,13 +43,13 @@ namespace Komunumo.Blog.Controllers
             {
                 try
                 {
-                    blogData.LikeCounter += 1;
-                    _context.Update(blogData);
+                    article.Popularity += 1;
+                    _context.Update(article);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BlogDataExists(blogData.Id))
+                    if (!ArticleExists(article.Article_ID))
                     {
                         return NotFound();
                     }
@@ -59,7 +58,7 @@ namespace Komunumo.Blog.Controllers
                         throw;
                     }
                 }
-                return View("Details", blogData);
+                return View("Details", article);
             }
         }
         #endregion
@@ -67,21 +66,21 @@ namespace Komunumo.Blog.Controllers
 
         #region Details
         // GET: BlogPage/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? article_ID)
         {
-            if (id == null)
+            if (article_ID == null)
             {
                 return NotFound();
             }
 
-            var blogData = await _context.BlogData
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (blogData == null)
+            var article = await _context.Article
+                .FirstOrDefaultAsync(m => m.Article_ID == article_ID);
+            if (article == null)
             {
                 return NotFound();
             }
 
-            return View(blogData);
+            return View(article);
         }
         #endregion
 
@@ -97,41 +96,41 @@ namespace Komunumo.Blog.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Context")] BlogData blogData)
+        public async Task<IActionResult> Create([Bind("Article_ID,Title,Context")] Article article)
         {
 
             System.Diagnostics.Debug.WriteLine(this.User.Identity.Name);
             if (ModelState.IsValid)
             {
-                //System.Diagnostics.Debug.WriteLine(blogData.LikeCounter);
-                blogData.Poster = this.User.Identity.Name;
-                blogData.EditDate = DateTime.Now;
-                blogData.PostDate = DateTime.Now;
-                _context.Add(blogData);
+                //System.Diagnostics.Debug.WriteLine(article.LikeCounter);
+                article.Poster = this.User.Identity.Name;
+                article.EditDate = DateTime.Now;
+                article.PostDate = DateTime.Now;
+                _context.Add(article);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(blogData);
+            return View(article);
         }
         #endregion
 
         #region Edit
         // GET: BlogPage/Edit/5
-        // int ? id 表示允許參數接收null值
-        public async Task<IActionResult> Edit(int? id)
+        // int ? Article_ID 表示允許參數接收null值
+        public async Task<IActionResult> Edit(int? article_ID)
         {
-            if (id == null)
+            if (article_ID == null)
             {
                 return NotFound();
             }
                     
-            var blogData = await _context.BlogData
-                    .FirstOrDefaultAsync(m => m.Id == id);
-            if (blogData == null)
+            var article = await _context.Article
+                    .FirstOrDefaultAsync(m => m.Article_ID == article_ID);
+            if (article == null)
             {
                 return NotFound();
             }
-            return View(blogData);
+            return View(article);
         }
 
         // POST: BlogPage/Edit/5
@@ -139,9 +138,9 @@ namespace Komunumo.Blog.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Context")] BlogData blogData)
+        public async Task<IActionResult> Edit(int article_ID, [Bind("Article_ID,Title,Context")] Article article)
         {
-            if (id != blogData.Id)
+            if (article_ID != article.Article_ID)
             {
                 return NotFound();
             }
@@ -150,16 +149,16 @@ namespace Komunumo.Blog.Controllers
             {
                 try
                 {
-                    var OldblogData = await _context.BlogData.FindAsync(id);
-                    OldblogData.EditDate = DateTime.Now;
-                    OldblogData.Title = blogData.Title;
-                    OldblogData.Context = blogData.Context;
-                    _context.Update(OldblogData);
+                    var Oldarticle = await _context.Article.FindAsync(article_ID);
+                    Oldarticle.EditDate = DateTime.Now;
+                    Oldarticle.Title = article.Title;
+                    Oldarticle.Context = article.Context;
+                    _context.Update(Oldarticle);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BlogDataExists(blogData.Id))
+                    if (!ArticleExists(article.Article_ID))
                     {
                         return NotFound();
                     }
@@ -170,44 +169,44 @@ namespace Komunumo.Blog.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(blogData);
+            return View(article);
         }
         #endregion
 
         #region Delete
         // GET: BlogPage/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? article_ID)
         {
-            if (id == null)
+            if (article_ID == null)
             {
                 return NotFound();
             }
 
-            var blogData = await _context.BlogData
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (blogData == null)
+            var article = await _context.Article
+                .FirstOrDefaultAsync(m => m.Article_ID == article_ID);
+            if (article == null)
             {
                 return NotFound();
             }
 
-            return View(blogData);
+            return View(article);
         }
         
 
         // POST: BlogPage/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int article_ID)
         {
-            var blogData = await _context.BlogData.FindAsync(id);
-            _context.BlogData.Remove(blogData);
+            var blogData = await _context.Article.FindAsync(article_ID);
+            _context.Article.Remove(blogData);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
         #endregion
-        private bool BlogDataExists(int id)
+        private bool ArticleExists(int article_ID)
         {
-            return _context.BlogData.Any(e => e.Id == id);
+            return _context.Article.Any(e => e.Article_ID == article_ID);
         }
     }
 }
