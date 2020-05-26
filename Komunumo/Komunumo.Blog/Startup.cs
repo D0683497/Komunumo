@@ -6,6 +6,8 @@ using Microsoft.Extensions.Hosting;
 using Komunumo.Blog.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace Komunumo.Blog
 {
@@ -30,6 +32,7 @@ namespace Komunumo.Blog
                 config.Password.RequireNonAlphanumeric = false;
                 config.Password.RequireUppercase = false;
             })
+                //.AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -39,7 +42,18 @@ namespace Komunumo.Blog
                 config.LoginPath = "/Home/Login";
             });
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(config=>
+            {
+                // using Microsoft.AspNetCore.Authorization;
+                //我也不知道它在幹嘛
+                
+                var policy = new AuthorizationPolicyBuilder()
+                 .RequireAuthenticatedUser()
+                 .Build();
+                config.Filters.Add(new AuthorizeFilter(policy));
+                
+            });
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

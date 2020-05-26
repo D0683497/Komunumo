@@ -14,12 +14,14 @@ namespace Komunumo.Blog.Migrations
                 {
                     Article_ID = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    OwnerID = table.Column<string>(nullable: true),
                     Poster = table.Column<string>(nullable: true),
                     Title = table.Column<string>(nullable: true),
                     Context = table.Column<string>(nullable: true),
                     PostDate = table.Column<DateTime>(nullable: false),
                     EditDate = table.Column<DateTime>(nullable: false),
-                    Popularity = table.Column<int>(nullable: false)
+                    Popularity = table.Column<int>(nullable: false),
+                    status = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {

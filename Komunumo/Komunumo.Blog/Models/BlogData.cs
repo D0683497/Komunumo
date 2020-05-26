@@ -8,7 +8,8 @@ namespace Komunumo.Blog.Models
     {
         [Key]
         public int Article_ID { get; set; }
-
+        // user ID from AspNetUser table.
+        public string OwnerID { get; set; }
         [ForeignKey("AspNetUsers.Username")]
         public string Poster { get; set; }
         public string Title { get; set; }
@@ -18,5 +19,13 @@ namespace Komunumo.Blog.Models
         public DateTime PostDate { get; set; }
         public DateTime EditDate { get; set; }
         public int Popularity { get; set; }
+        public ContactStatus status { get; set; }
     }
+    public enum ContactStatus
+    {
+        Submitted,
+        Approved,
+        Rejected
+    }
+
 }

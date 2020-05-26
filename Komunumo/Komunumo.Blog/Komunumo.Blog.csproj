@@ -17,6 +17,8 @@
     <Compile Remove="Migrations\20200519112421_UsePsql.Designer.cs" />
     <Compile Remove="Migrations\20200525055205_Test.cs" />
     <Compile Remove="Migrations\20200525055205_Test.Designer.cs" />
+    <Compile Remove="Migrations\20200525064351_test.cs" />
+    <Compile Remove="Migrations\20200525064351_test.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

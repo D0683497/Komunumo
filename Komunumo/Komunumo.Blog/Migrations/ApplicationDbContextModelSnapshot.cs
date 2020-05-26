@@ -32,6 +32,9 @@ namespace Komunumo.Blog.Migrations
                     b.Property<DateTime>("EditDate")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<string>("OwnerID")
+                        .HasColumnType("text");
+
                     b.Property<int>("Popularity")
                         .HasColumnType("integer");
 
@@ -43,6 +46,9 @@ namespace Komunumo.Blog.Migrations
 
                     b.Property<string>("Title")
                         .HasColumnType("text");
+
+                    b.Property<int>("status")
+                        .HasColumnType("integer");
 
                     b.HasKey("Article_ID");
 
