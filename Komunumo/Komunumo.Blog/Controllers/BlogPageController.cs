@@ -6,8 +6,11 @@ using Komunumo.Blog.Data;
 using Komunumo.Blog.Models;
 using Microsoft.CodeAnalysis;
 using System;
+using Microsoft.AspNetCore.Authorization;
+
 namespace Komunumo.Blog.Controllers
 {
+    [Authorize]
     public class BlogPageController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -17,6 +20,7 @@ namespace Komunumo.Blog.Controllers
             _context = context;
         }
 
+        [AllowAnonymous]
         #region Index
         // GET: BlogPage
         public async Task<IActionResult> Index()
@@ -27,14 +31,14 @@ namespace Komunumo.Blog.Controllers
 
         #region Add_Like
         // GET: BlogPage/Details/5 Like it
-        public async Task<IActionResult> Add_Like(int? article_ID)
+        public async Task<IActionResult> Add_Like(int? id)
         {
-            if(article_ID == null)
+            if(id == null)
             {
                 return NotFound();
             }
             var article = await _context.Article
-                            .FirstOrDefaultAsync(m => m.Article_ID == article_ID);
+                            .FirstOrDefaultAsync(m => m.Article_ID == id);
             if (article == null)
             {
                 return NotFound();
@@ -63,18 +67,18 @@ namespace Komunumo.Blog.Controllers
         }
         #endregion
 
-
+        [AllowAnonymous]
         #region Details
         // GET: BlogPage/Details/5
-        public async Task<IActionResult> Details(int? article_ID)
+        public async Task<IActionResult> Details(int? id)
         {
-            if (article_ID == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
             var article = await _context.Article
-                .FirstOrDefaultAsync(m => m.Article_ID == article_ID);
+                .FirstOrDefaultAsync(m => m.Article_ID == id);
             if (article == null)
             {
                 return NotFound();
@@ -88,6 +92,7 @@ namespace Komunumo.Blog.Controllers
         // GET: BlogPage/Create
         public IActionResult Create()
         {
+            
             return View();
         }
 
@@ -104,8 +109,10 @@ namespace Komunumo.Blog.Controllers
             {
                 //System.Diagnostics.Debug.WriteLine(article.LikeCounter);
                 article.Poster = this.User.Identity.Name;
+                article.OwnerID = this.User.Identity.Name;
                 article.EditDate = DateTime.Now;
                 article.PostDate = DateTime.Now;
+
                 _context.Add(article);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -117,15 +124,15 @@ namespace Komunumo.Blog.Controllers
         #region Edit
         // GET: BlogPage/Edit/5
         // int ? Article_ID 表示允許參數接收null值
-        public async Task<IActionResult> Edit(int? article_ID)
+        public async Task<IActionResult> Edit(int? id)
         {
-            if (article_ID == null)
+            if (id == null)
             {
                 return NotFound();
             }
                     
             var article = await _context.Article
-                    .FirstOrDefaultAsync(m => m.Article_ID == article_ID);
+                    .FirstOrDefaultAsync(m => m.Article_ID == id);
             if (article == null)
             {
                 return NotFound();
@@ -175,15 +182,15 @@ namespace Komunumo.Blog.Controllers
 
         #region Delete
         // GET: BlogPage/Delete/5
-        public async Task<IActionResult> Delete(int? article_ID)
+        public async Task<IActionResult> Delete(int? id)
         {
-            if (article_ID == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
             var article = await _context.Article
-                .FirstOrDefaultAsync(m => m.Article_ID == article_ID);
+                .FirstOrDefaultAsync(m => m.Article_ID == id);
             if (article == null)
             {
                 return NotFound();
@@ -196,9 +203,9 @@ namespace Komunumo.Blog.Controllers
         // POST: BlogPage/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int article_ID)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var blogData = await _context.Article.FindAsync(article_ID);
+            var blogData = await _context.Article.FindAsync(id);
             _context.Article.Remove(blogData);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

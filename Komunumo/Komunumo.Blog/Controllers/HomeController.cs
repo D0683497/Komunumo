@@ -81,16 +81,9 @@ namespace Komunumo.Blog.Controllers
             }
 
             return RedirectToAction("Index");
-
         }
         #endregion
 
-        /*[Authorize]
-        public IActionResult Secret()
-        {
-            return View();
-        }
-        */
         #region LogOut
         public async Task<IActionResult> LogOut()
         {

@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Komunumo.Blog.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200525141553_test")]
+    [Migration("20200603124509_test")]
     partial class test
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

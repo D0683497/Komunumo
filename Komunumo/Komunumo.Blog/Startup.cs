@@ -42,17 +42,7 @@ namespace Komunumo.Blog
                 config.LoginPath = "/Home/Login";
             });
 
-            services.AddControllersWithViews(config=>
-            {
-                // using Microsoft.AspNetCore.Authorization;
-                //我也不知道它在幹嘛
-                
-                var policy = new AuthorizationPolicyBuilder()
-                 .RequireAuthenticatedUser()
-                 .Build();
-                config.Filters.Add(new AuthorizeFilter(policy));
-                
-            });
+            services.AddControllersWithViews();
 
         }
 
