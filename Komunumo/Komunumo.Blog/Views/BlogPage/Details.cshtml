@@ -1,4 +1,7 @@
 ﻿@model Komunumo.Blog.Models.Article
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<BlogUser> SignInManager
+@inject UserManager<BlogUser> UserManager
 
 @{
     ViewData["Title"] = "Details";
@@ -38,11 +41,36 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Popularity)
         </dd>
-        
-        <a class="btn btn-dark" role="button" asp-action="Add_Like" asp-route-id="@Model.Article_ID">Like</a>
     </dl>
+
+    <div class="row">
+        <div class="col-4 row" >
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <div class="col-auto">
+                    <a class="btn btn-dark" role="button" asp-action="Add_Like" asp-route-id="@Model.Article_ID">Like</a>
+                </div>
+            }
+            @if (SignInManager.IsSignedIn(User) && (@UserManager.GetUserName(User) == Model.OwnerID))
+            {
+
+                <div class="col-auto">
+                    <a class="btn btn-dark" role="button" asp-action="Edit" asp-route-id="@Model.Article_ID">Edit</a>
+                </div>
+
+            }
+            else
+            {
+                <div class="col-auto">
+                    <p class="btn btn-dark" role="button">不是這個人喔</p>
+                </div>
+            }
+            <div class="col-auto">
+                @*  *@
+            <a class="btn btn-dark" role="button" asp-action="Index">Back to List</a>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Article_ID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+

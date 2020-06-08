@@ -9,12 +9,12 @@ namespace Komunumo.Blog.Controllers
     
     public class HomeController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManger;
+        private readonly UserManager<BlogUser> _userManager;
+        private readonly SignInManager<BlogUser> _signInManger;
 
         public HomeController(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
+            UserManager<BlogUser> userManager,
+            SignInManager<BlogUser> signInManager)
         {
             _userManager = userManager;
             _signInManger = signInManager;
@@ -29,6 +29,10 @@ namespace Komunumo.Blog.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string username, string password)
         {
+            if (username == null)
+            {
+                return View();
+            }
             //login functionality
             var user = await _userManager.FindByNameAsync(username);
 
@@ -39,11 +43,12 @@ namespace Komunumo.Blog.Controllers
 
                 if (signInResult.Succeeded)
                 {
-                    return RedirectToAction("Index");
+                    return Redirect("/BlogPage/Index");
                 }
             }
-            return RedirectToAction("Index");
+            return View();
         }
+
 
         public IActionResult Login()
         {
@@ -58,29 +63,25 @@ namespace Komunumo.Blog.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Register(string username, string password)
+        public async Task<IActionResult> Register(string password, [Bind("UserName,Email,PhoneNumber,Department,Degree,College")]BlogUser blogUser )
         {
             //Register functionality
-            var user = new IdentityUser
-            {
-                UserName = username,
-                Email = "",
-            };
 
-            var result = await _userManager.CreateAsync(user, password);
+            var result = await _userManager.CreateAsync(blogUser, password);
 
+            System.Diagnostics.Debug.WriteLine(result);
             if (result.Succeeded)
             {
                 //sign in
-                var signInResult = await _signInManger.PasswordSignInAsync(user, password, false, false);
+                var signInResult = await _signInManger.PasswordSignInAsync(blogUser, password, false, false);
 
                 if (signInResult.Succeeded)
                 {
-                    return RedirectToAction("Index");
+                    return Redirect("/BlogPage/Index");
                 }
             }
 
-            return RedirectToAction("Index");
+            return View();
         }
         #endregion
 
@@ -89,7 +90,7 @@ namespace Komunumo.Blog.Controllers
         {
             await _signInManger.SignOutAsync();
 
-            return RedirectToAction("Index");
+            return Redirect("/BlogPage/Index");
         }
         #endregion
 

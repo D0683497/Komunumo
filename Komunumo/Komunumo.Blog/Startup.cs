@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Komunumo.Blog.Models;
 
 namespace Komunumo.Blog
 {
@@ -25,7 +26,7 @@ namespace Komunumo.Blog
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("ApplicationDbContext")));
-            services.AddIdentity<IdentityUser, IdentityRole>(config =>
+            services.AddIdentity<BlogUser, IdentityRole>(config =>
             {
                 config.Password.RequiredLength = 4;
                 config.Password.RequireDigit = false;

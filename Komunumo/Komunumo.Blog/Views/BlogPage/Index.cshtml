@@ -58,7 +58,8 @@
                             </p>
                         </div>
                         <p class="mb-4">
-                            @Html.DisplayFor(modelItem => item.Context)
+                            @Html.DisplayFor(modelItem => item.Context) |
+                            Likes: @Html.DisplayFor(modelItem => item.Popularity)
                         </p>
                         <p>
                             <a href="#" class="btn-custom my-2 my-sm-0">

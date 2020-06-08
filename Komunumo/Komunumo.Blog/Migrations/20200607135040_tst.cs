@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Komunumo.Blog.Migrations
 {
-    public partial class test : Migration
+    public partial class tst : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -20,8 +20,7 @@ namespace Komunumo.Blog.Migrations
                     Context = table.Column<string>(nullable: true),
                     PostDate = table.Column<DateTime>(nullable: false),
                     EditDate = table.Column<DateTime>(nullable: false),
-                    Popularity = table.Column<int>(nullable: false),
-                    status = table.Column<int>(nullable: false)
+                    Popularity = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -60,11 +59,39 @@ namespace Komunumo.Blog.Migrations
                     TwoFactorEnabled = table.Column<bool>(nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
-                    AccessFailedCount = table.Column<int>(nullable: false)
+                    AccessFailedCount = table.Column<int>(nullable: false),
+                    Department = table.Column<string>(nullable: true),
+                    Degree = table.Column<string>(nullable: true),
+                    College = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Like_s_article",
+                columns: table => new
+                {
+                    Username = table.Column<string>(nullable: false),
+                    Article_ID = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Like_s_article", x => new { x.Username, x.Article_ID });
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Photo",
+                columns: table => new
+                {
+                    PhotoID = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Article_ID = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Photo", x => x.PhotoID);
                 });
 
             migrationBuilder.CreateTable(
@@ -230,6 +257,12 @@ namespace Komunumo.Blog.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Like_s_article");
+
+            migrationBuilder.DropTable(
+                name: "Photo");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

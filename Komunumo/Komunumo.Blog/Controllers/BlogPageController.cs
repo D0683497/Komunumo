@@ -92,7 +92,6 @@ namespace Komunumo.Blog.Controllers
         // GET: BlogPage/Create
         public IActionResult Create()
         {
-            
             return View();
         }
 
@@ -101,7 +100,7 @@ namespace Komunumo.Blog.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Article_ID,Title,Context")] Article article)
+        public async Task<IActionResult> Create([Bind("Title,Context")] Article article)
         {
 
             System.Diagnostics.Debug.WriteLine(this.User.Identity.Name);
