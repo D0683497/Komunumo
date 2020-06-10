@@ -1,15 +1,22 @@
-﻿using System.Diagnostics;
+using System;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Komunumo.Admin.Models;
+using Komunumo.Admin.Configuration.Constants;
+using Komunumo.Admin.ExceptionHandling;
 
 namespace Komunumo.Admin.Controllers
 {
-    public class HomeController : Controller
+    [Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
+    [TypeFilter(typeof(ControllerExceptionFilterAttribute))]
+    public class HomeController : BaseController
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<ConfigurationController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<ConfigurationController> logger) : base(logger)
         {
             _logger = logger;
         }
@@ -19,15 +26,39 @@ namespace Komunumo.Admin.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        [HttpPost]
+        public IActionResult SetLanguage(string culture, string returnUrl)
         {
-            return View();
+            Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+            );
+            return LocalRedirect(returnUrl);
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            // Get the details of the exception that occurred
+            var exceptionFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+
+            if (exceptionFeature == null) return View();
+
+            // Get which route the exception occurred at
+            string routeWhereExceptionOccurred = exceptionFeature.Path;
+
+            // Get the exception that occurred
+            Exception exceptionThatOccurred = exceptionFeature.Error;
+
+            // Log the exception
+            _logger.LogError(exceptionThatOccurred, $"Exception at route {routeWhereExceptionOccurred}");
+
+            return View();
         }
     }
 }
+
+
+
+
+
